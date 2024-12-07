@@ -20,7 +20,11 @@ fun StopWatchLabel(text: String = "00:00.00", modifier: Modifier = Modifier) {
 
 @Composable
 fun StopWatchLabel(duration: Double = 0.15, modifier: Modifier = Modifier) {
-    val formattedDuration: String = String.format("%05.2f", duration)
+    val totalSeconds = duration.toInt()
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    val milliseconds = ((duration - totalSeconds) * 100).toInt()
+    val formattedDuration = String.format("%02d:%02d.%02d", minutes, seconds, milliseconds)
 
     Text(
         text = formattedDuration,

@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,7 +39,7 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun StopWatch() {
-    val (duration, setDuration) = remember { mutableStateOf(0.0) }
+    var duration by remember { mutableStateOf(0.0) }
 
     Scaffold(
         containerColor = Color.White,
@@ -80,7 +82,10 @@ fun StopWatch() {
                     .fillMaxSize()
                     .weight(0.2f)
             ) {
-                StopWatchButtonGroup(setDuration = setDuration)
+                StopWatchButtonGroup(
+                    startStopWatch = { duration += 0.03 },
+                    clearStopWatch = { duration = 0.0 }
+                )
             }
         }
     }
