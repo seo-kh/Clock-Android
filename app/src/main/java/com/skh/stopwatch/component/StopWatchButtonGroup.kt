@@ -1,5 +1,7 @@
 package com.skh.stopwatch.component
 
+import android.util.Log
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.width
@@ -10,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,14 +24,36 @@ import com.skh.stopwatch.data.StopWatchState
 import java.util.Timer
 import kotlin.concurrent.timer
 
+class StopWatchTimer {
+    private var timer: Timer? = null
+
+    private constructor()
+
+    fun start(period: Long, callback: () -> Unit) {
+        this.timer = timer(period = period) {
+            callback()
+        }
+    }
+
+    fun stop() {
+        this.timer?.cancel()
+        this.timer = null
+    }
+
+    companion object {
+        val INSTANCE = StopWatchTimer()
+    }
+}
+
 @Composable
 fun StopWatchButtonGroup(
     startStopWatch: () -> Unit,
     clearStopWatch: () -> Unit,
+    stopWatchTimer: StopWatchTimer = StopWatchTimer.INSTANCE,
     modifier: Modifier = Modifier
 ) {
-    var stopWatchState by remember { mutableStateOf(StopWatchState.INTRO) }
-    var stopWatch: Timer? by remember { mutableStateOf(null) }
+    Log.d("StopWatch", "StopWatchButtonGroup")
+    var stopWatchState by rememberSaveable { mutableStateOf(StopWatchState.INTRO) }
 
     val buttonConfig = stopWatchState.getButtonConfig()
     val featureButtonConfig = buttonConfig[0]
@@ -40,7 +65,6 @@ fun StopWatchButtonGroup(
             when (stopWatchState) {
                 StopWatchState.INTRO -> {}
                 StopWatchState.PAUSE -> {
-                    // CLEAR STOPWATCH
                     clearStopWatch()
                 }
                 StopWatchState.PROGRESS -> {
@@ -63,21 +87,24 @@ fun StopWatchButtonGroup(
             when (stopWatchState) {
                 StopWatchState.INTRO -> {
                     // TIMER ON
-                    stopWatch = timer(period = 30) {
-                        startStopWatch()
-                    }
+                    stopWatchTimer
+                        .start(period = 30) {
+                            startStopWatch()
+                        }
+
                 }
                 StopWatchState.PROGRESS -> {
                     // TIMER OFF
-                    stopWatch?.cancel()
-                    stopWatch = null
+                    stopWatchTimer
+                        .stop()
 
                 }
                 StopWatchState.PAUSE -> {
                     // TIMER ON
-                    stopWatch = timer(period = 30) {
-                        startStopWatch()
-                    }
+                    stopWatchTimer
+                        .start(period = 30) {
+                            startStopWatch()
+                        }
                 }
             }
 
