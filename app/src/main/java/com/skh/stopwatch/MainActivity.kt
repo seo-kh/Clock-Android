@@ -76,7 +76,9 @@ fun StopWatch() {
                         // TODO: NO LIST - 0.4f, LIST: - 0.5f
                         0.4f
                     )
-            )
+            ) {
+                // TODO: STOP WATCH RECORDS
+            }
 
             // BUTTON GROUP
             Box(
@@ -87,7 +89,8 @@ fun StopWatch() {
             ) {
                 StopWatchButtonGroup(
                     startStopWatch = { duration += 0.03 },
-                    clearStopWatch = { duration = 0.0 }
+                    clearStopWatch = { duration = 0.0 },
+                    updateRecord = {}
                 )
             }
         }

@@ -21,167 +21,78 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.skh.stopwatch.data.StopWatchState
+import com.skh.stopwatch.util.StopWatchTimer
 import java.util.Timer
 import kotlin.concurrent.timer
 
-class StopWatchTimer {
-    private var timer: Timer? = null
-
-    private constructor()
-
-    fun start(period: Long, callback: () -> Unit) {
-        this.timer = timer(period = period) {
-            callback()
-        }
-    }
-
-    fun stop() {
-        this.timer?.cancel()
-        this.timer = null
-    }
-
-    companion object {
-        val INSTANCE = StopWatchTimer()
-    }
-}
 
 @Composable
 fun StopWatchButtonGroup(
     startStopWatch: () -> Unit,
     clearStopWatch: () -> Unit,
-    stopWatchTimer: StopWatchTimer = StopWatchTimer.INSTANCE,
+    updateRecord: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Log.d("StopWatch", "StopWatchButtonGroup")
     var stopWatchState by rememberSaveable { mutableStateOf(StopWatchState.INTRO) }
 
     val buttonConfig = stopWatchState.getButtonConfig()
     val featureButtonConfig = buttonConfig[0]
     val timerButtonConfig = buttonConfig[1]
 
-    StopWatchButtonGroupComponent(
-        featureTitle = featureButtonConfig.title,
-        featureAction = {
-            when (stopWatchState) {
-                StopWatchState.INTRO -> {}
-                StopWatchState.PAUSE -> {
-                    clearStopWatch()
-                }
-                StopWatchState.PROGRESS -> {
-                    // DURATION LIST ADD
-                }
-            }
-
-            // STATE CHANGE
-            stopWatchState = when (stopWatchState) {
-                StopWatchState.PAUSE -> StopWatchState.INTRO
-                else -> stopWatchState
-            }
-        },
-        featureContainerColor = featureButtonConfig.containerColor,
-        featureContentColor = featureButtonConfig.contentColor,
-        featureActionEnabled = stopWatchState != StopWatchState.INTRO,
-        timerTitle = timerButtonConfig.title,
-        timerAction = {
-            // STOPWATCH ON or OFF
-            when (stopWatchState) {
-                StopWatchState.INTRO -> {
-                    // TIMER ON
-                    stopWatchTimer
-                        .start(period = 30) {
-                            startStopWatch()
-                        }
-
-                }
-                StopWatchState.PROGRESS -> {
-                    // TIMER OFF
-                    stopWatchTimer
-                        .stop()
-
-                }
-                StopWatchState.PAUSE -> {
-                    // TIMER ON
-                    stopWatchTimer
-                        .start(period = 30) {
-                            startStopWatch()
-                        }
-                }
-            }
-
-            // STATE CHANGE
-            stopWatchState = when (stopWatchState) {
-                StopWatchState.INTRO -> StopWatchState.PROGRESS
-                StopWatchState.PROGRESS -> StopWatchState.PAUSE
-                StopWatchState.PAUSE -> StopWatchState.PROGRESS
-            }
-
-        },
-        timerContainerColor = timerButtonConfig.containerColor,
-        timerContentColor = timerButtonConfig.contentColor
-    )
-}
-
-@Composable
-fun StopWatchButtonGroupComponent(
-    featureTitle: String,
-    featureAction: () -> Unit,
-    featureContainerColor: Color,
-    featureContentColor: Color,
-    featureActionEnabled: Boolean = true,
-    timerTitle: String,
-    timerAction: () -> Unit,
-    timerContainerColor: Color,
-    timerContentColor: Color,
-    modifier: Modifier = Modifier
-) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(32.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Button(
-            enabled = featureActionEnabled,
-            modifier = Modifier.width(120.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = featureContainerColor,
-                contentColor = featureContentColor
-            ),
-            onClick = featureAction
+        // RECORD BUTTON
+        StopWatchButton(
+            featureButtonConfig,
+            enabled = stopWatchState != StopWatchState.INTRO,
+            modifier = Modifier.width(120.dp)
         ) {
-            Text(
-                featureTitle,
-                fontWeight = FontWeight.Bold
-            )
+
+            when (stopWatchState) {
+                StopWatchState.INTRO -> {}
+
+                // RECORD
+                StopWatchState.PROGRESS -> {
+                    updateRecord()
+                }
+                StopWatchState.PAUSE -> {
+                    // CLEAR
+                    clearStopWatch()
+                    stopWatchState = StopWatchState.INTRO
+                }
+            }
         }
 
-        Button(
-            modifier = Modifier.width(120.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = timerContainerColor,
-                contentColor = timerContentColor
-            ),
-            onClick = timerAction
+        // TIMER BUTTON
+        StopWatchButton(
+            timerButtonConfig,
+            modifier = Modifier.width(120.dp)
         ) {
-            Text(
-                timerTitle,
-                fontWeight = FontWeight.Bold
-            )
+            // state action
+            stopWatchState.timerAction(onComplete = startStopWatch)
+
+            // state changed
+            stopWatchState = stopWatchState.nextState()
         }
     }
 }
 
+
 @Preview
 @Composable
 private fun introButtonGroup() {
-    StopWatchButtonGroup(startStopWatch = {}, clearStopWatch = {})
+    StopWatchButtonGroup(startStopWatch = {}, clearStopWatch = {}, updateRecord = {})
 }
 
 @Preview
 @Composable
 private fun progressButtonGroup() {
-    StopWatchButtonGroup(startStopWatch = {}, clearStopWatch = {})
+    StopWatchButtonGroup(startStopWatch = {}, clearStopWatch = {}, updateRecord = {})
 }
 @Preview
 @Composable
 private fun pauseButtonGroup() {
-    StopWatchButtonGroup(startStopWatch = {}, clearStopWatch = {})
+    StopWatchButtonGroup(startStopWatch = {}, clearStopWatch = {}, updateRecord = {})
 }
