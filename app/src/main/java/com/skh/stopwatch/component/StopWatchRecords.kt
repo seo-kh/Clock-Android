@@ -26,7 +26,7 @@ fun StopWatchRecords(records: List<StopWatchRecord>, modifier: Modifier = Modifi
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
-            .padding(horizontal = 24.dp, vertical = 8.dp)
+            .padding(horizontal = 48.dp, vertical = 8.dp)
     ) {
         Row {
             Text(

@@ -99,7 +99,7 @@ fun StopWatch() {
                 StopWatchButtonGroup(
                     startStopWatch = { overallTime += 0.03; splitTime += 0.03 },
                     clearStopWatch = { overallTime = 0.0; records.clear(); splitTime = 0.0 },
-                    updateRecord = { records.add(splitTime); splitTime = 0.0 }
+                    updateRecord = { records.add(splitTime, overallTime); splitTime = 0.0 }
                 )
             }
         }

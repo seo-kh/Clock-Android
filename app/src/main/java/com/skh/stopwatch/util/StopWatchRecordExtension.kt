@@ -20,11 +20,8 @@ fun List<StopWatchRecord>.colorMaker(interval: Int): Color {
     }
 }
 
-fun SnapshotStateList<StopWatchRecord>.add(value: Double) {
+fun SnapshotStateList<StopWatchRecord>.add(splitTime: Double, overallTime: Double) {
     val interval = this.size + 1
-    val splitTime = value - (this.lastOrNull()?.overallTime ?: 0.0)
-    val overallTime = value
     val record = StopWatchRecord(interval, splitTime, overallTime)
-
-    this.add(record)
+    this.add(index = 0, element = record)
 }
