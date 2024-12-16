@@ -65,36 +65,43 @@ fun StopWatch() {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.padding(paddingValues)
         ) {
-            Spacer(Modifier.height(if (records.isEmpty()) 88.dp else 48.dp))
 
             // STOPWATCH LABEL
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
+                    .weight(0.2f)
             ) {
                 StopWatchLabel(time = overallTime)
             }
 
+            Spacer(Modifier.weight(if (records.isEmpty()) 0.2f else 0.01f))
+
             // STOPWATCH RECORD LIST
             if (records.isNotEmpty()) {
-                StopWatchLabel(splitTime, fontSize = 24.sp, color = Color.Gray)
-
                 Box(
                     modifier = Modifier
-                        .padding(top = if (records.isEmpty()) 0.dp else 32.dp)
+                        .weight(0.7f)
                 ) {
-                    StopWatchRecords(records)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(32.dp),
+                    ) {
+                        StopWatchLabel(splitTime, fontSize = 24.sp, color = Color.Gray)
+
+                        StopWatchRecords(records)
+                    }
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f))
 
             // STOPWATCH BUTTON GROUP
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 32.dp)
+                    .height(128.dp)
+                    .padding(bottom = 32.dp, top = 16.dp)
             ) {
                 StopWatchButtonGroup(
                     startStopWatch = { overallTime += 0.03; splitTime += 0.03 },
