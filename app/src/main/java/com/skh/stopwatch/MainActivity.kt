@@ -8,11 +8,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,7 +29,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.skh.stopwatch.component.StopWatchLabel
 import com.skh.stopwatch.component.StopWatchTopBar
 import com.skh.stopwatch.component.StopWatchButtonGroup
+import com.skh.stopwatch.component.StopWatchRecords
+import com.skh.stopwatch.data.StopWatchRecord
 import com.skh.stopwatch.ui.theme.StopWatchTheme
+import com.skh.stopwatch.util.add
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +50,8 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun StopWatch() {
-    var duration by rememberSaveable { mutableStateOf(0.0) }
+    var duration: Double by rememberSaveable { mutableStateOf(0.0) }
+    val records = rememberSaveable(saver = StopWatchRecord.saver) { mutableStateListOf<StopWatchRecord>() }
 
     Scaffold(
         containerColor = Color.White,
@@ -61,23 +70,23 @@ fun StopWatch() {
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(
-                        // TODO: NO LIST - 0.4f, LIST: - 0.3f
-                        0.4f
+                        if (records.isEmpty()) 0.4f else 0.3f
                     )
             ) {
                 StopWatchLabel(duration = duration)
             }
 
             // TODO: RECORD LIST
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(
-                        // TODO: NO LIST - 0.4f, LIST: - 0.5f
-                        0.4f
-                    )
-            ) {
-                // TODO: STOP WATCH RECORDS
+            if (records.isNotEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(
+                            if (records.isEmpty()) 0.4f else 0.5f
+                        )
+                ) {
+                    StopWatchRecords(records)
+                }
             }
 
             // BUTTON GROUP
@@ -89,11 +98,10 @@ fun StopWatch() {
             ) {
                 StopWatchButtonGroup(
                     startStopWatch = { duration += 0.03 },
-                    clearStopWatch = { duration = 0.0 },
-                    updateRecord = {}
+                    clearStopWatch = { duration = 0.0; records.clear() },
+                    updateRecord = { records.add(duration) }
                 )
             }
         }
     }
-
 }
