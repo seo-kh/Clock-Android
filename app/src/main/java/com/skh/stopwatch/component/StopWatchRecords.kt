@@ -24,28 +24,28 @@ import com.skh.stopwatch.util.colorMaker
 @Composable
 fun StopWatchRecords(records: List<StopWatchRecord>, modifier: Modifier = Modifier) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
             .padding(horizontal = 24.dp, vertical = 8.dp)
     ) {
         Row {
             Text(
                 "구간",
-                fontSize = 24.sp,
+                fontSize = 14.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.width(48.dp),
                 color = Color.Gray
             )
             Text(
                 "구간기록",
-                fontSize = 24.sp,
+                fontSize = 14.sp,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.End,
                 color = Color.Gray
             )
             Text(
                 "전체 시간",
-                fontSize = 24.sp,
+                fontSize = 14.sp,
                 modifier = Modifier.weight(1f),
                 textAlign = TextAlign.End,
                 color = Color.Gray
@@ -66,21 +66,21 @@ fun StopWatchRecords(records: List<StopWatchRecord>, modifier: Modifier = Modifi
                 Row {
                     Text(
                         String.format("%02d", item.interval),
-                        fontSize = 24.sp,
+                        fontSize = 14.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.width(48.dp),
                         color = records.colorMaker(item.interval)
                     )
                     StopWatchLabel(
                         item.splitTime,
-                        fontSize = 24.sp,
+                        fontSize = 14.sp,
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.End,
                         color = Color.Gray
                     )
                     StopWatchLabel(
                         item.overallTime,
-                        fontSize = 24.sp,
+                        fontSize = 14.sp,
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.End
                     )

@@ -31,17 +31,17 @@ fun StopWatchLabel(
 
 @Composable
 fun StopWatchLabel(
-    duration: Double = 0.15,
+    time: Double = 0.15,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Center,
     fontSize: TextUnit = 48.sp,
     fontFamily: FontFamily = FontFamily.Monospace,
     color: Color = Color.Black
 ) {
-    val totalSeconds = duration.toInt()
+    val totalSeconds = time.toInt()
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
-    val milliseconds = ((duration - totalSeconds) * 100).toInt()
+    val milliseconds = ((time - totalSeconds) * 100).toInt()
     val formattedDuration = String.format("%02d:%02d.%02d", minutes, seconds, milliseconds)
 
     Text(
@@ -57,6 +57,6 @@ fun StopWatchLabel(
 @Preview
 @Composable
 private fun Label(modifier: Modifier = Modifier) {
-    StopWatchLabel(duration = 3.45)
+    StopWatchLabel(time = 3.45)
 }
 
